@@ -1,4 +1,4 @@
-// +build !windows,!darwin,!cgo
+// +build !windows,!darwin
 
 /*
    Copyright 2017, Yoshiki Shibukawa
@@ -19,17 +19,18 @@
 package gotomation
 
 import (
+	"time"
+
 	"github.com/BurntSushi/xgb"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgb/xtest"
-	"time"
 )
 
-type mouse struct {
+type Mouse struct {
 	screen *screen
 }
 
-func (m mouse) GetPosition() (x, y int) {
+func (m *Mouse) GetPosition() (x, y int) {
 	r, err := xproto.QueryPointer(m.screen.conn, m.screen.screen.Root).Reply()
 	if err != nil {
 		return -1, -1
@@ -37,7 +38,7 @@ func (m mouse) GetPosition() (x, y int) {
 	return int(r.RootX), int(r.RootY)
 }
 
-func (m mouse) MoveQuickly(x, y int) error {
+func (m *Mouse) MoveQuickly(x, y int) error {
 	root := m.screen.screen.Root
 	none := xproto.Window(0)
 	cookie := xproto.WarpPointerChecked(m.screen.conn, none, root, 0, 0, 0, 0, int16(x), int16(y))
@@ -59,7 +60,7 @@ func mouseToggleButton(conn *xgb.Conn, screen *xproto.ScreenInfo, down bool, but
 	return cookie.Check()
 }
 
-func (m mouse) ClickWith(button MouseButton) error {
+func (m *Mouse) ClickWith(button MouseButton) error {
 	err := mouseToggleButton(m.screen.conn, m.screen.screen, true, button)
 	if err != nil {
 		return err
@@ -73,7 +74,7 @@ func (m mouse) ClickWith(button MouseButton) error {
 	return nil
 }
 
-func (m mouse) DragWith(button MouseButton, x, y int) error {
+func (m *Mouse) DragWith(button MouseButton, x, y int) error {
 	err := mouseToggleButton(m.screen.conn, m.screen.screen, true, button)
 	if err != nil {
 		return err
@@ -91,7 +92,7 @@ func (m mouse) DragWith(button MouseButton, x, y int) error {
 	return mouseToggleButton(m.screen.conn, m.screen.screen, false, button)
 }
 
-func (m mouse) DoubleClickWith(button MouseButton) error {
+func (m *Mouse) DoubleClickWith(button MouseButton) error {
 	err := m.ClickWith(button)
 	if err != nil {
 		return err
@@ -100,7 +101,7 @@ func (m mouse) DoubleClickWith(button MouseButton) error {
 	return m.ClickWith(button)
 }
 
-func (m mouse) ScrollQuickly(x, y int) error {
+func (m *Mouse) ScrollQuickly(x, y int) error {
 	if y < 0 {
 		for ; y != 0; y++ {
 			err := m.ClickWith(xMouseScrollUp)

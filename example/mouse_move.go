@@ -1,9 +1,12 @@
+// +build ignore
+
 package main
 
 import (
 	"fmt"
-	"github.com/shibukawa/gotomation"
 	"time"
+
+	"github.com/viocle-kvanek/gotomation"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-// +build !windows,!darwin,!cgo
+// +build !windows,!darwin
 
 /*
    Copyright 2017, Yoshiki Shibukawa
@@ -20,7 +20,6 @@ package gotomation
 
 import (
 	"errors"
-	"github.com/BurntSushi/xgb/xproto"
 	"math/rand"
 	"time"
 )
@@ -177,12 +176,12 @@ const (
 	VK_FINAL        = VK_NOT_A_KEY
 )
 
-type keyboard struct {
+type Keyboard struct {
 	waitBetweenChars time.Duration // delay
 	screen           *screen
 }
 
-func (k keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifier) error {
+func (k *Keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifier) error {
 	var typ xXCB_TYPE
 	if down {
 		typ = xXCB_KEY_PRESS
@@ -209,6 +208,10 @@ func (k keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifi
 	return fakeInput(k.screen.conn, k.screen.screen, code, typ)
 }
 
-func (k keyboard) Type(str string) error {
+func (k *Keyboard) Type(str string) error {
 	return errors.New("Type feature is not working without cgo")
+}
+
+func (k *Keyboard) TypeQuickly(str string) error {
+	return errors.New("Not implemented")
 }

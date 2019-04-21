@@ -31,25 +31,15 @@ const (
 	COMMAND             = META
 )
 
-type Keyboard interface {
-	SetTypeSpeed(charPerMin int)
-	TypeSpeed() int
-	KeyPress(code KeyCode, modifiers ...KeyModifier) error
-	KeyDown(code KeyCode, modifiers ...KeyModifier) error
-	KeyUp(code KeyCode, modifiers ...KeyModifier) error
-	Type(str string) error
-	TypeQuickly(str string) error
-}
-
-func (k *keyboard) SetTypeSpeed(charPerMin int) {
+func (k *Keyboard) SetTypeSpeed(charPerMin int) {
 	k.waitBetweenChars = time.Minute / time.Duration(charPerMin)
 }
 
-func (k keyboard) TypeSpeed() int {
+func (k *Keyboard) TypeSpeed() int {
 	return int(time.Minute / k.waitBetweenChars)
 }
 
-func (k keyboard) KeyPress(code KeyCode, modifiers ...KeyModifier) error {
+func (k *Keyboard) KeyPress(code KeyCode, modifiers ...KeyModifier) error {
 	err := k.toggleKeyByCode(code, true, modifiers)
 	if err != nil {
 		return err
@@ -63,7 +53,7 @@ func (k keyboard) KeyPress(code KeyCode, modifiers ...KeyModifier) error {
 	return nil
 }
 
-func (k keyboard) KeyDown(code KeyCode, modifiers ...KeyModifier) error {
+func (k *Keyboard) KeyDown(code KeyCode, modifiers ...KeyModifier) error {
 	err := k.toggleKeyByCode(code, true, modifiers)
 	if err != nil {
 		return err
@@ -72,7 +62,7 @@ func (k keyboard) KeyDown(code KeyCode, modifiers ...KeyModifier) error {
 	return nil
 }
 
-func (k keyboard) KeyUp(code KeyCode, modifiers ...KeyModifier) error {
+func (k *Keyboard) KeyUp(code KeyCode, modifiers ...KeyModifier) error {
 	err := k.toggleKeyByCode(code, false, modifiers)
 	if err != nil {
 		return err

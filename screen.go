@@ -20,41 +20,42 @@ Package gotomation is cross-platform system automation library.
 package gotomation
 
 import (
-	"github.com/bamiaux/rez"
 	"image"
+
+	"github.com/bamiaux/rez"
 )
 
 type Screen struct {
 	screen   *screen
-	mouse    Mouse
-	keyboard Keyboard
+	mouse    *Mouse
+	keyboard *Keyboard
 }
 
-func (s Screen) ID() int {
+func (s *Screen) ID() int {
 	return s.screen.getID()
 }
 
-func (s Screen) X() int {
+func (s *Screen) X() int {
 	return 0
 }
 
-func (s Screen) Y() int {
+func (s *Screen) Y() int {
 	return 0
 }
 
-func (s Screen) W() int {
+func (s *Screen) W() int {
 	return s.screen.w
 }
 
-func (s Screen) H() int {
+func (s *Screen) H() int {
 	return s.screen.h
 }
 
-func (s Screen) RawCapture() (image.Image, error) {
+func (s *Screen) RawCapture() (image.Image, error) {
 	return s.screen.capture(image.Rect(0, 0, s.screen.w, s.screen.h))
 }
 
-func (s Screen) Capture() (image.Image, error) {
+func (s *Screen) Capture() (image.Image, error) {
 	rawImage, err := s.RawCapture()
 	if err != nil {
 		return nil, err
@@ -68,7 +69,7 @@ func (s Screen) Capture() (image.Image, error) {
 	return result, nil
 }
 
-func (s Screen) fixRegion(rect image.Rectangle) image.Rectangle {
+func (s *Screen) fixRegion(rect image.Rectangle) image.Rectangle {
 	if rect.Min.X < 0 {
 		rect.Min.X = 0
 	}
@@ -84,11 +85,11 @@ func (s Screen) fixRegion(rect image.Rectangle) image.Rectangle {
 	return rect
 }
 
-func (s Screen) RawCaptureRegion(rect image.Rectangle) (image.Image, error) {
+func (s *Screen) RawCaptureRegion(rect image.Rectangle) (image.Image, error) {
 	return s.screen.capture(s.fixRegion(rect))
 }
 
-func (s Screen) CaptureRegion(rect image.Rectangle) (image.Image, error) {
+func (s *Screen) CaptureRegion(rect image.Rectangle) (image.Image, error) {
 	rawImage, err := s.RawCaptureRegion(s.fixRegion(rect))
 	if err != nil {
 		return nil, err
@@ -104,14 +105,14 @@ func (s Screen) CaptureRegion(rect image.Rectangle) (image.Image, error) {
 	return result, nil
 }
 
-func (s Screen) Close() {
+func (s *Screen) Close() {
 	s.screen.close()
 }
 
-func (s Screen) Mouse() Mouse {
+func (s *Screen) Mouse() *Mouse {
 	return s.mouse
 }
 
-func (s Screen) Keyboard() Keyboard {
+func (s *Screen) Keyboard() *Keyboard {
 	return s.keyboard
 }

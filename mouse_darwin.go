@@ -30,7 +30,7 @@ CGEventRef createScrollEvent(int32_t x, int32_t y) {
 import "C"
 import "time"
 
-type mouse struct{}
+type Mouse struct{}
 
 func rawMousePos() C.CGPoint {
 	event := C.CGEventCreate(nil)
@@ -38,7 +38,7 @@ func rawMousePos() C.CGPoint {
 	return C.CGEventGetLocation(event)
 }
 
-func (m mouse) GetPosition() (x, y int) {
+func (m *Mouse) GetPosition() (x, y int) {
 	point := rawMousePos()
 	x = int(point.x)
 	y = int(point.y)
@@ -52,7 +52,7 @@ func calculateDeltas(event *C.CGEventRef, x, y int) {
 	C.CGEventSetIntegerValueField(*event, C.kCGMouseEventDeltaY, C.int64_t(y)-C.int64_t(pos.y))
 }
 
-func (m mouse) MoveQuickly(x, y int) error {
+func (m *Mouse) MoveQuickly(x, y int) error {
 	move := C.CGEventCreateMouseEvent(nil, C.kCGEventMouseMoved,
 		C.CGPointMake((C.CGFloat)(x), (C.CGFloat)(y)),
 		C.kCGMouseButtonLeft)
@@ -93,7 +93,7 @@ func mouseToggleButton(down bool, button MouseButton) {
 	C.CGEventPost(C.kCGSessionEventTap, event)
 }
 
-func (m mouse) ClickWith(button MouseButton) error {
+func (m *Mouse) ClickWith(button MouseButton) error {
 	mouseToggleButton(true, button)
 	time.Sleep(time.Millisecond * 10)
 	mouseToggleButton(false, button)
@@ -101,7 +101,7 @@ func (m mouse) ClickWith(button MouseButton) error {
 	return nil
 }
 
-func (m mouse) DoubleClickWith(button MouseButton) error {
+func (m *Mouse) DoubleClickWith(button MouseButton) error {
 	event := C.CGEventCreateMouseEvent(nil, mouseType(true, MouseLeft), rawMousePos(), C.kCGMouseButtonLeft)
 	defer C.CFRelease(C.CFTypeRef(event))
 
@@ -115,14 +115,14 @@ func (m mouse) DoubleClickWith(button MouseButton) error {
 	return nil
 }
 
-func (m mouse) ScrollQuickly(x, y int) error {
+func (m *Mouse) ScrollQuickly(x, y int) error {
 	event := C.createScrollEvent(C.int32_t(x), C.int32_t(y))
 	defer C.CFRelease(C.CFTypeRef(event))
 	C.CGEventPost(C.kCGHIDEventTap, event)
 	return nil
 }
 
-func (m mouse) DragWith(button MouseButton, x, y int) error {
+func (m *Mouse) DragWith(button MouseButton, x, y int) error {
 	var dragType C.CGEventType
 	switch button {
 	case MouseLeft:

@@ -21,7 +21,7 @@ import (
 	"unsafe"
 )
 
-type mouse struct{}
+type Mouse struct{}
 
 // https://pywinauto.github.io/
 // todo: debug
@@ -49,7 +49,7 @@ func mouseType(down bool, button MouseButton) (mouseType uint32) {
 	return
 }
 
-func (m mouse) ClickWith(button MouseButton) error {
+func (m *Mouse) ClickWith(button MouseButton) error {
 	input := wMOUSEINPUT{
 		typeCode: wINPUT_MOUSE,
 	}
@@ -61,7 +61,7 @@ func (m mouse) ClickWith(button MouseButton) error {
 	return nil
 }
 
-func (m mouse) GetPosition() (x, y int) {
+func (m *Mouse) GetPosition() (x, y int) {
 	point := wPOINT{}
 	procGetCursorPos.Call(uintptr(unsafe.Pointer(&point)))
 	x = int(point.x)
@@ -69,7 +69,7 @@ func (m mouse) GetPosition() (x, y int) {
 	return
 }
 
-func (m mouse) MoveQuickly(x, y int) error {
+func (m *Mouse) MoveQuickly(x, y int) error {
 	sx, sy := m.GetPosition()
 	input := wMOUSEINPUT{
 		typeCode: wINPUT_MOUSE,
@@ -85,7 +85,7 @@ func (m mouse) MoveQuickly(x, y int) error {
 	return nil
 }
 
-func (m mouse) DragWith(button MouseButton, x, y int) error {
+func (m *Mouse) DragWith(button MouseButton, x, y int) error {
 	input1 := wMOUSEINPUT{
 		typeCode: wINPUT_MOUSE,
 	}
@@ -112,7 +112,7 @@ func (m mouse) DragWith(button MouseButton, x, y int) error {
 	return nil
 }
 
-func (m mouse) DoubleClickWith(button MouseButton) error {
+func (m *Mouse) DoubleClickWith(button MouseButton) error {
 	err := m.ClickWith(button)
 	if err != nil {
 		return err
@@ -121,7 +121,7 @@ func (m mouse) DoubleClickWith(button MouseButton) error {
 	return m.ClickWith(button)
 }
 
-func (m mouse) ScrollQuickly(x, y int) error {
+func (m *Mouse) ScrollQuickly(x, y int) error {
 	input := wMOUSEINPUT{
 		typeCode: wINPUT_MOUSE,
 	}

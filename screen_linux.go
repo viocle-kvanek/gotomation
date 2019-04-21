@@ -1,4 +1,4 @@
-// +build !windows,!darwin,!cgo
+// +build !windows,!darwin
 
 /*
    Copyright 2017, Yoshiki Shibukawa
@@ -20,11 +20,12 @@ package gotomation
 
 import (
 	"errors"
+	"image"
+	"time"
+
 	"github.com/BurntSushi/xgb"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgb/xtest"
-	"image"
-	"time"
 )
 
 type screen struct {
@@ -35,7 +36,7 @@ type screen struct {
 	id      int
 }
 
-func (s screen) getID() int {
+func (s *screen) getID() int {
 	return s.id
 }
 
@@ -58,10 +59,10 @@ func newScreen(conn *xgb.Conn, screenInfo *xproto.ScreenInfo, id int) (*Screen, 
 	}
 	return &Screen{
 		screen: result,
-		mouse: &mouse{
+		mouse: &Mouse{
 			screen: result,
 		},
-		keyboard: &keyboard{
+		keyboard: &Keyboard{
 			waitBetweenChars: 50 * time.Millisecond,
 			screen:           result,
 		},
@@ -117,7 +118,7 @@ func (s *screen) capture(rect image.Rectangle) (image.Image, error) {
 	}, nil
 }
 
-func (s screen) close() {
+func (s *screen) close() {
 	s.conn.Close()
 	s.conn = nil
 }

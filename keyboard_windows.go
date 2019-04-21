@@ -208,7 +208,7 @@ var extendedKeys = map[KeyCode]bool{
 	//VK_LAUNCH_MAIL: true,
 }
 
-type keyboard struct {
+type Keyboard struct {
 	waitBetweenChars time.Duration // delay
 }
 
@@ -240,7 +240,7 @@ func keyEvent(key KeyCode, flag uint32) error {
 	return nil
 }
 
-func (k keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifier) error {
+func (k *Keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifier) error {
 	var dwFlags uint32
 	if !down {
 		dwFlags = wKEYEVENTF_KEYUP
@@ -265,7 +265,7 @@ func (k keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifi
 	return keyEvent(code, dwFlags)
 }
 
-func (k keyboard) Type(str string) error {
+func (k *Keyboard) Type(str string) error {
 	codes := utf16.Encode([]rune(str))
 	if len(codes) == 0 {
 		return nil
@@ -288,6 +288,6 @@ func (k keyboard) Type(str string) error {
 	return nil
 }
 
-func (k keyboard) TypeQuickly(str string) error {
+func (k *Keyboard) TypeQuickly(str string) error {
 	return k.Type(str)
 }

@@ -28,19 +28,6 @@ const (
 	MouseRight              = 3
 )
 
-type Mouse interface {
-	GetPosition() (x, y int)
-	Move(x, y int, duration time.Duration) error
-	MoveQuickly(x, y int) error
-	Click() error
-	ClickWith(button MouseButton) error
-	DoubleClick() error
-	DoubleClickWith(button MouseButton) error
-	Drag(x, y int) error
-	DragWith(button MouseButton, x, y int) error
-	Scroll(x, y int, duration time.Duration) error
-}
-
 func easeInOutCubic(values [][2]int, duration time.Duration, callback func([]int) error) error {
 	count := int(duration / (time.Millisecond * 16))
 	delta := make([]float64, len(values))
@@ -89,26 +76,26 @@ func easeInOutCubic(values [][2]int, duration time.Duration, callback func([]int
 
 	http://robertpenner.com/easing/
 */
-func (m mouse) Move(x, y int, duration time.Duration) error {
+func (m *Mouse) Move(x, y int, duration time.Duration) error {
 	sx, sy := m.GetPosition()
 	return easeInOutCubic([][2]int{{sx, x}, {sy, y}}, duration, func(value []int) error {
 		return m.MoveQuickly(value[0], value[1])
 	})
 }
 
-func (m mouse) Click() error {
+func (m *Mouse) Click() error {
 	return m.ClickWith(MouseLeft)
 }
 
-func (m mouse) DoubleClick() error {
+func (m *Mouse) DoubleClick() error {
 	return m.DoubleClickWith(MouseLeft)
 }
 
-func (m mouse) Drag(x, y int) error {
+func (m *Mouse) Drag(x, y int) error {
 	return m.DragWith(MouseLeft, x, y)
 }
 
-func (m mouse) Scroll(x, y int, duration time.Duration) error {
+func (m *Mouse) Scroll(x, y int, duration time.Duration) error {
 	lastValues := []int{0, 0}
 	return easeInOutCubic([][2]int{{0, x}, {0, y}}, duration, func(values []int) error {
 		err := m.ScrollQuickly(values[0]-lastValues[0], values[1]-lastValues[1])

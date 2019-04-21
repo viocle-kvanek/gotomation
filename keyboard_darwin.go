@@ -196,11 +196,11 @@ const (
 	VK_KANA         = C.kVK_JIS_Kana
 )
 
-type keyboard struct {
+type Keyboard struct {
 	waitBetweenChars time.Duration // delay
 }
 
-func (k keyboard) Type(str string) error {
+func (k *Keyboard) Type(str string) error {
 	for _, char := range str {
 		err := k.tap(char)
 		if err != nil {
@@ -211,7 +211,7 @@ func (k keyboard) Type(str string) error {
 	return nil
 }
 
-func (k keyboard) TypeQuickly(str string) error {
+func (k *Keyboard) TypeQuickly(str string) error {
 	for _, char := range str {
 		err := k.tap(char)
 		if err != nil {
@@ -221,7 +221,7 @@ func (k keyboard) TypeQuickly(str string) error {
 	return nil
 }
 
-func (k keyboard) tap(char rune) error {
+func (k *Keyboard) tap(char rune) error {
 	err := k.toggleKeyByRune(char, true)
 	if err != nil {
 		return err
@@ -229,7 +229,7 @@ func (k keyboard) tap(char rune) error {
 	return k.toggleKeyByRune(char, false)
 }
 
-func (k keyboard) toggleKeyByRune(char rune, down bool) error {
+func (k *Keyboard) toggleKeyByRune(char rune, down bool) error {
 	if char >= 0x10000 {
 		r1, r2 := utf16.EncodeRune(char)
 		chars := [2]C.UniChar{C.UniChar(r1), C.UniChar(r2)}
@@ -254,7 +254,7 @@ type nxEventData struct { /* For window-changed, sys-defined, and app-defined ev
 	L        [11]uint32 /* for use in compound events */
 }
 
-func (k keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifier) error {
+func (k *Keyboard) toggleKeyByCode(code KeyCode, down bool, modifiers []KeyModifier) error {
 	if code > 1000 {
 		code = code - 1000 /* Get the real keycode. */
 		var loc C.IOGPoint

@@ -37,7 +37,7 @@ type screen struct {
 	w, h int
 }
 
-func (s screen) getID() int {
+func (s *screen) getID() int {
 	return s.id
 }
 
@@ -62,7 +62,7 @@ func GetScreen(id int) (*Screen, error) {
 	}, nil
 }
 
-func (s screen) capture(rect image.Rectangle) (image.Image, error) {
+func (s *screen) capture(rect image.Rectangle) (image.Image, error) {
 	osImage := C.CGDisplayCreateImageForRect(C.CGDirectDisplayID(s.id),
 		C.CGRectMake(C.CGFloat(rect.Min.X), C.CGFloat(rect.Min.Y), C.CGFloat(rect.Dx()), C.CGFloat(rect.Dy())))
 
@@ -104,5 +104,5 @@ func (s screen) capture(rect image.Rectangle) (image.Image, error) {
 	return nil, fmt.Errorf("Capture doesn't support color mode with %d bits per pixel", bitsPerPixel)
 }
 
-func (s screen) close() {
+func (s *screen) close() {
 }

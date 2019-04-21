@@ -27,7 +27,7 @@ type screen struct {
 	w, h int
 }
 
-func (s screen) getID() int {
+func (s *screen) getID() int {
 	return int(s.hwnd)
 }
 
@@ -67,7 +67,7 @@ func GetScreen(hwnd uintptr) (*Screen, error) {
 	}, nil
 }
 
-func (s screen) capture(rect image.Rectangle) (image.Image, error) {
+func (s *screen) capture(rect image.Rectangle) (image.Image, error) {
 	w := rect.Dx()
 	h := rect.Dy()
 	bi := wBITMAPINFO{}
@@ -122,5 +122,5 @@ func (s screen) capture(rect image.Rectangle) (image.Image, error) {
 	}, nil
 }
 
-func (s screen) close() {
+func (s *screen) close() {
 }
